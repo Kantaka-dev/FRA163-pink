@@ -171,7 +171,18 @@ angle = 0 ; loop = 0 ; count = 0
 while True:
     if input_step:
         screen.blit(input_backg, (0, 0))
-        pass
+        if start_btn:
+            # target_distance = 2  # meter
+            # target_velocity = 20.0  # rpm
+            # shoot_angle = 60  # degree
+            # shoot_speed = 1000  # rpm
+            # time_delay = 1.0  # second
+            # time_in_air = 2.0   # second
+            # speed_display = 1.0
+            # mode = True
+            # for basket in baskets:
+            #     basket.setTarget(target_velocity/10)
+            # ball.setShooter(shoot_angle, time_in_air, target_distance)
     elif simulation_step:
         screen.blit(simulation_backg, (0, 0))
         screen.blit(target_side, (851, 606))
