@@ -1,5 +1,6 @@
 # FRA163 Pitching Machine Simulation Program
 import pygame as pg
+import math
 pg.init()
 
 FONT = pg.font.SysFont('ocraextended', 18)
@@ -16,7 +17,9 @@ GRAY4 = (153, 153, 153)
 GRAY5 = (128, 128, 128)
 BLACK = (0, 0, 0)
 
-import math
+input_backg = pg.image.load('input_backg.png')
+simulation_backg = pg.image.load('simulation_backg.png')
+
 def CalculateAngle(x,z): #x=distance y=target velocity z=shooter Speed
     check = (x * 9.81 * 3600) / ((z ** 2) * ((0.052) ** 2) * ((math.pi * 2) ** 2))
     if -1 <=check<= 1 :
@@ -52,3 +55,23 @@ def Overall(x,y,z,a,n):
         return y,x,CalculateVelocity(x,a),CalculateAngle(x,z),DelayTime(x,y,z,a,n),t
 print(Overall(3,10,1500,33,1))
 TV,S,SV,A,dT,T = Overall(3,10,1500,33,1)
+
+win_x, win_y = 1024, 768
+input_step = True
+simulation_step = False
+screen = pg.display.set_mode((winX, winY))
+while True:
+    if input_step:
+        Screen.blit(input_backg, (0, 0))
+        pass
+    elif simulation_step:
+        Screen.blit(simulation_backg, (0, 0))
+        pass
+    for event in pg.event.get():
+        if input_step:
+            pass
+        elif simulation_step:
+            pass
+        if event.type == pg.QUIT:
+            pg.quit()
+            exit()
