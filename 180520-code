@@ -137,7 +137,7 @@ def CalculateAngle(x,z): #x=distance y=target velocity z=shooter Speed
             return 90-result
     else:
         return "ERROR"
-print(CalculateAngle(3,1500))
+#print(CalculateAngle(3,1500))
 
 def CalculateVelocity(x,a): #x=distance y=target velocity a=angle
     deg = (a) * 2 * (math.pi / 180)
@@ -146,7 +146,7 @@ def CalculateVelocity(x,a): #x=distance y=target velocity a=angle
         return result
     else:
         return "ERROR"
-print(CalculateVelocity(3,33))
+#print(CalculateVelocity(3,33))
 
 def DelayTime(x,y,z,a,n): #x=distance y=target velocity z=shooter Speed a=angle n=sequence
     if 0 < a < 90:
@@ -154,14 +154,18 @@ def DelayTime(x,y,z,a,n): #x=distance y=target velocity z=shooter Speed a=angle 
         dt=t%(60/y)
         det = (60/y)-dt+(15/y)*n
     return det
-print(DelayTime(3,10,1500,33,1))
+#print(DelayTime(3,10,1500,33,1))
 
 def Overall(x,y,z,a,n):
     if 0 < a < 90:
-        t = x / ((z) * ((2 * math.pi) / 60) * 0.052 * math.cos(a* (math.pi / 180)))
-        return y,x,CalculateVelocity(x,a),CalculateAngle(x,z),DelayTime(x,y,z,a,n),t
-print(Overall(3,10,1500,33,1))
-TV,S,SV,A,dT,T = Overall(3,10,1500,33,1)
+        an = a* (math.pi / 180)
+        u = (z) * ((2 * math.pi) / 60)*0.052
+        t = x / (u *math.cos(an))
+        sy = u*math.sin(an)*(t/2)-0.5*9.81*(t/2)**2
+        #print(u*math.sin(an)*(t/2),0.5*9.81*(t/2)**2,(t/2)**2)
+        return y,x,CalculateVelocity(x,a),CalculateAngle(x,z),sy,DelayTime(x,y,z,a,n),t
+print(Overall(3,10,1500,70,1))
+Vt,Sx,Vx,A,Sy,dT,T = Overall(3,10,1500,33,1)
 
 win_x, win_y = 1024, 768
 input_step = True
