@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 import pygame as pg
 import math
+from fra163_setup import check, calculateAngle, calculateVelocity, delayTime, drawSolution, drawTimer
 
 pg.init()
+pg.display.set_caption('FRA163 Pink-team')
+pg.display.set_icon(pg.image.load('fibo_icon.jpg'))
 clock = pg.time.Clock()  # set FPS=60 (error+2%)
 
 # Final Constants ------------------------------------------------------------------------------------------------------
@@ -11,8 +14,7 @@ FONT14 = pg.font.SysFont('ocraextended', 14)
 FONT16 = pg.font.SysFont('ocraextended', 16)
 FONT18 = pg.font.SysFont('ocraextended', 18)
 FONT20 = pg.font.SysFont('ocraextended', 20)
-FONT30 = pg.font.SysFont('ocraextended', 30)
-FONTSD = pg.font.SysFont('ocrastdopentype', 20)
+FONT24 = pg.font.SysFont('ocraextended', 24)
 PURPLE = (109, 55, 140)
 RED = (255, 89, 100)
 GREEN = (119, 224, 36)
@@ -25,7 +27,7 @@ GRAY3 = (179, 179, 179)
 GRAY4 = (153, 153, 153)
 GRAY5 = (128, 128, 128)
 BLACK = (0, 0, 0)
-NUMBER = [46] + range(48, 58) + range(256, 267)
+NUMBER = [46] + list(range(48, 58)) + list(range(256, 267))
 input_backg = pg.image.load('input_backg.png')
 simulation_backg = pg.image.load('simulation_backg.png')
 shooter_top = pg.image.load('shooter_top.png')
@@ -130,9 +132,10 @@ class InputBox(Box):
             else:
                 self.active = False
         if event.type == pg.KEYDOWN:
+            print(event.key)
             if self.active:
                 if event.key in NUMBER and len(self.value) < 10:
-                    self.value += event.unicode
+                    self.value += str(event.unicode)
                 elif event.key == pg.K_BACKSPACE:
                     self.value = self.value[:-1]
 distance_target = InputBox(57, 224, 'Distance to target', '(2-4)m', (2,4))
@@ -166,7 +169,7 @@ class PushButton:
         pg.draw.rect(screen, self.back_color, (self.x, self.y, 114, 40))
         pg.draw.circle(screen, self.back_color, (self.x, self.y+20), 20)
         pg.draw.circle(screen, self.back_color, (self.x+114, self.y+20), 20)
-        screen.blit(FONTSD.render(self.text, True, self.txt_color), (self.x+22, self.y+12))
+        screen.blit(FONT24.render(self.text, True, self.txt_color), (self.x+19, self.y+7))
     def handle_event(self, event):
         if self.show:
             if self.active:
@@ -215,6 +218,9 @@ class Choice(Box):
                 self.txt_color = GRAY5
             pg.draw.rect(screen, self.color, (self.x, self.y, self.w, self.h))
             screen.blit(FONT20.render("*"+str(self.text), True, self.txt_color), (self.x+40, self.y+4))
+            if len(self.link) == 3:
+                pg.draw.polygon(screen, GRAY5,
+                                ((self.x+110, self.y+10), (self.x+120, self.y+10), (self.x+115, self.y+20)))
 speed_025 = Choice(80, 558, 0.25)
 speed_050 = Choice(80, 588, 0.50)
 speed_100 = Choice(80, 618, 1.00)
@@ -279,9 +285,9 @@ class Ball:
             self.direction.append([int(self.posiZ), int(self.posiY)])
         if self.posiZ >= shooterX+195:
             screen.blit(FONT16.render("%.1f m" % (self.max_height), True, ORANGE),
-                        (shooterX+170, int(shooterY - self.max_height/self.distance*465)-17))
-            pg.draw.line(screen, ORANGE, (shooterX+170, int(shooterY - self.max_height/self.distance*465)),
-                         (shooterX+220, int(shooterY - self.max_height/self.distance*465)), 1)
+                        (shooterX+170, int(shooterY - self.max_height/self.distance*465)-7))
+            pg.draw.line(screen, ORANGE, (shooterX+170, int(shooterY - self.max_height/self.distance*465)+10),
+                         (shooterX+220, int(shooterY - self.max_height/self.distance*465)+10), 1)
     def drawDirection(self):
         for point in self.direction:
             pg.draw.circle(screen, ORANGE, (point), 2)
@@ -310,8 +316,6 @@ def calculateAngle(distance, shoot_speed):
             return 90-shoot_angle
     else:
         return "ERROR"
-# print(calculateAngle(3,1500))  # 76.912..
-# print('\n')
 
 def calculateVelocity(distance, shoot_angle):
     deg = shoot_angle * 2 * math.pi/180
@@ -320,8 +324,6 @@ def calculateVelocity(distance, shoot_angle):
         return target_velo
     else:
         return "ERROR"
-# print(calculateVelocity(3,33))  # 1042.312..
-# print('\n')
 
 def delayTime(distance, target_velo, shoot_speed, shoot_angle, sequence=0):
     if 0 < shoot_angle < 90:
@@ -329,8 +331,6 @@ def delayTime(distance, target_velo, shoot_speed, shoot_angle, sequence=0):
         delay = 60/target_velo - t%(60/target_velo) + (15/target_velo)*sequence
         max_height = shoot_speed*(math.pi/30)*0.052*math.sin(shoot_angle*math.pi/180)*(t/2)-0.5*9.81*(t/2)**2
     return delay, t, max_height
-# print(delayTime(3,10,1500,70))  # 7.062..
-# print('\n')
 
 def drawSolution(angle, speed, delay, in_air, mode_lockspeed):
     total = delay + in_air
@@ -387,7 +387,7 @@ while True:  # Run -------------------------------------------------------------
         if start_btn.active:
             target_distance = float(distance_target.value)  # meter
             target_velo = float(target_velocity.value)  # rpm
-            mode_lockspeed = True  # default is False
+            mode_lockspeed = False  # default is False
             if mode_lockspeed:
                 shoot_speed = 1000  # rpm
                 if calculateAngle(target_distance, shoot_speed) == "ERROR":
