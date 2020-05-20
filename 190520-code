@@ -451,7 +451,7 @@ while True:  # Run -------------------------------------------------------------
         if angle >= 360: angle = 0
         angle += target_velo / 10 * speed_display
 
-        if loop > (time_delay + time_in_air) * 60 or pg.mouse.get_pressed()[0] == 1:
+        if loop > (time_delay + time_in_air)*60 or (pg.mouse.get_pressed()[0] == 1 and not speed_box.isMouseOff()):
             print ("{} ms per loop / {} ms in fact".format(pg.time.get_ticks() - count,
                                                            int(time_delay + time_in_air) * 1000))
             pg.time.delay(250 + int(50 / speed_display))
