@@ -1,4 +1,5 @@
 # FRA163 Pitching Machine Simulation Program
+# -*- coding: utf-8 -*-
 import pygame as pg
 import math
 
