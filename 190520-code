@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import pygame as pg
 import math
-from fra163_setup import check, calculateAngle, calculateVelocity, delayTime, drawSolution, drawTimer
 
 pg.init()
 pg.display.set_caption('FRA163 Pink-team')
